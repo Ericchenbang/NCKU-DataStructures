@@ -1,7 +1,6 @@
 #include<stdio.h>
 
-
-int find(int *arr, int index){
+/**int find(int *arr, int index){
     int store = index;
     while (arr[index] != -1){
         index = arr[index];
@@ -15,9 +14,9 @@ void unionset(int *arr, int a, int b){
     int checkB = find(arr, b);
     if (checkA != checkB) arr[checkB] = checkA;
     return;
-}
+}*/
 
-#define SIZE 100
+
 int main(){
     int n;
     scanf("%d", &n);
@@ -28,8 +27,11 @@ int main(){
         }
     }
 
-    int disjointSet[n];
-    for (int i = 0; i < n; i++) disjointSet[i] = -1;
+    //int disjointSet[n];
+    //for (int i = 0; i < n; i++) disjointSet[i] = -1;
+    int visited[n];
+    for (int i = 0; i < n; i++) visited[i] = 0;
+    visited[0] = 1;
 
     int edgeCost = 0;
     int edge[n-1][2];
@@ -38,39 +40,27 @@ int main(){
     //edge[0][1] = -1;
 
     while (edgeIndex < n - 1){
-
         int min = 10000;
         int u = -1, v = -1;
 
-        if (edgeIndex == 0){
-            int targetIndex = 0;
-            for (int i = 0; i < n; i++){
-                int e = input[targetIndex][i];
-                if (e != 0 && (find(disjointSet, targetIndex) != find(disjointSet, i))){
-                    if (e < min){
+        int targetIndex;
+        for (int k = 0; k <= edgeIndex; k++){
+            if (edgeIndex != 0 && k == edgeIndex) break;
+
+            for (int s = 0; s < 2; s++){
+                if (s == 1 && edgeIndex == 0){
+                    break;
+                }
+                targetIndex = edge[k][s];
+                for (int i = 0; i < n; i++){
+                    int e = input[targetIndex][i];
+                    //if (e != 0 && (find(disjointSet, targetIndex) != find(disjointSet, i)))
+                    if (e != 0 && visited[i] != 1 && e < min){
                         min = e;
                         u = targetIndex;
                         v = i;
                     }
                 }
-            }
-        }else{
-            for (int k = 0; k < edgeIndex; k++){
-                for (int s = 0; s < 2; s++){
-                    int targetIndex = edge[k][s];
-
-                    for (int i = 0; i < n; i++){
-                        int e = input[targetIndex][i];
-                        if (e != 0 && (find(disjointSet, targetIndex) != find(disjointSet, i))){
-                            if (e < min){
-                                min = e;
-                                u = targetIndex;
-                                v = i;
-                            }
-                        }
-                    }
-                }
-                
             }
         }
         
@@ -78,7 +68,8 @@ int main(){
             printf("false\n");
             break;
         }
-        unionset(disjointSet, u, v);
+        //unionset(disjointSet, u, v);
+        visited[v] = 1;
         edge[edgeIndex][0] = u;
         edge[edgeIndex++][1] = v;
         edgeCost += min;
