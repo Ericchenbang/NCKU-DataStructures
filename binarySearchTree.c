@@ -56,6 +56,11 @@ void delete(int x, struct Node **root){
     struct Node *deleteNode;
     struct Node *lastNode;
     deleteNode = search(x, *root, &lastNode);
+    if (lastNode == NULL){
+        *root = NULL;
+        return;
+    }
+
     if (deleteNode -> left == NULL && deleteNode -> right == NULL){
         if (lastNode -> left == deleteNode){
             lastNode -> left = NULL;
@@ -96,28 +101,26 @@ void delete(int x, struct Node **root){
 
 }
 
-void printNode(struct Node *p){
-    struct Node *leftChild = NULL;
-    struct Node *rightChild = NULL;
-    if (p != NULL){
-        //printf("%d ", p -> data);
-        leftChild = p -> left;
-        rightChild = p -> right;
+#define SIZE 100
+struct Node *queue[SIZE];
+int front = 0;
+int rear = -1;
+void printNode(struct Node *root){
+    if (root != NULL){
+        queue[++rear] = root;
     }
 
-    if (leftChild != NULL){
-        printf("%d ", leftChild -> data);
+    while (rear >= front){
+        struct Node *target = queue[front++];
+        printf("%d ", target -> data);
+        if (target -> left != NULL){
+            queue[++rear] = target -> left;
+        }
+        if (target -> right != NULL){
+            queue[++rear] = target -> right;
+        }
     }
-    if (rightChild != NULL){
-        printf("%d ", rightChild -> data);
-    }
-
-    if (leftChild != NULL){
-        printNode(leftChild);
-    }
-    if (rightChild != NULL){
-        printNode(rightChild);
-    }
+    
 }
 
 
@@ -144,7 +147,7 @@ int main(){
         scanf("%s", operation);
     }
 
-    printf("%d ", root -> data);
+    
     printNode(root);
 
     return 0;
