@@ -2,7 +2,6 @@
 #include<stdlib.h>
 #include<string.h>
 
-
 struct Node{
     int data;
     struct Node *left;
@@ -23,7 +22,9 @@ int shortest(struct Node *p){
     return 1 + shortest(p -> right);
 }
 
-struct Node *meld(struct Node *treeA, struct Node *treeB){
+void printTree(struct Node *root);
+
+/**struct Node *meld(struct Node *treeA, struct Node *treeB){
     struct Node *record = treeA;
     struct Node *a = record;
     struct Node *b = treeB;
@@ -31,6 +32,7 @@ struct Node *meld(struct Node *treeA, struct Node *treeB){
 
     while(1){
         if (a == NULL){
+            printf("b -> data = %d\n", b -> data);
             lastA -> right = b;
             break;
         }
@@ -38,47 +40,73 @@ struct Node *meld(struct Node *treeA, struct Node *treeB){
             break;
         }
 
-        //printf("a -> data = %d, b -> data = %d\n", a -> data, b -> data);
+        printf("a -> data = %d, b -> data = %d\n", a -> data, b -> data);
         // Set treeA is root(a -> data is smaller)
         if (a -> data > b -> data){
             struct Node *temp = a;
             
             if (lastA != NULL){
-                //printf("lastA -> data = %d\n", lastA -> data);
+                printf("lastA -> data = %d\n", lastA -> data);
                 lastA -> right = b;
             }
             a = b;
             b = temp;
         }
 
-        //printf("a -> data = %d, b -> data = %d\n", a -> data, b -> data);
+        printf("a -> data = %d, b -> data = %d\n", a -> data, b -> data);
         lastA = a;
         a = a -> right;
-        
+        printTree(record);
+        printf("\n");
     }
 
     int sLength = shortest(record);
-    //printf("sLength = %d\n", sLength);
+    printf("sLength = %d\n", sLength);
     for (int i = 0; i < sLength; i++){
         struct Node *p = record;
         for (int j = sLength - i - 1; j > 0; j--){
             p = p -> right;
-            //printf("record -> data = %d\n", p -> data);
+            printf("record -> data = %d\n", p -> data);
         }
 
         if (shortest(p -> left) < shortest(p -> right)){
             struct Node *temp = p -> left;
             p -> left = p -> right;
             p -> right = temp;
-            //printf("p -> left -> data = %d, p -> right -> data = %d\n", p->left->data, p->right->data);
+            printf("p -> left -> data = %d, p -> right -> data = %d\n", p->left->data, p->right->data);
         }
     }
 
     return record;
+}*/
+
+struct Node *meld(struct Node *treeA, struct Node *treeB){
+    if (treeA == NULL) return treeB;
+    if (treeB == NULL) return treeA;
+
+    // Ensure the smaller root is treeA
+    if (treeA->data > treeB->data){
+        struct Node *temp = treeA;
+        treeA = treeB;
+        treeB = temp;
+    }
+
+    // Recursively meld treeA's right child with treeB
+    treeA->right = meld(treeA->right, treeB);
+
+    // Swap to maintain leftist property
+    if (shortest(treeA->left) < shortest(treeA->right)){
+        struct Node *temp = treeA->left;
+        treeA->left = treeA->right;
+        treeA->right = temp;
+    }
+
+    return treeA;
 }
 
 
-/*void insert(struct Node **root, int x){
+
+void insert(struct Node **root, int x){
     struct Node *newTree = create(x);
     if (*root == NULL){
         *root = newTree;
@@ -99,9 +127,9 @@ void delete(struct Node **root){
     }else if (p -> right == NULL){
         *root = p -> left;
     }else{
-        meld(p -> left, p -> right);
+        *root = meld(p -> left, p -> right);
     }
-}*/
+}
 
 
 #define SIZE 100
@@ -124,7 +152,7 @@ void printTree(struct Node *root){
 
 
 int main(){
-    /**char operation[6];
+    char operation[6];
     scanf("%s", operation);
     
     struct Node *root = NULL;
@@ -132,6 +160,7 @@ int main(){
     int x;
     while (operation[0] != 'e'){
         if (operation[0] == 'i'){
+            scanf("%d", &x);
             insert(&root, x);
 
         }else if (operation[0] == 'd'){
@@ -139,9 +168,10 @@ int main(){
         }
 
         scanf("%s", operation);
-    }*/
+    }
+    printTree(root);
 
-    struct Node *treeA = create(5);
+    /**struct Node *treeA = create(5);
     treeA -> left = create(9);
     treeA -> left -> left = create(12);
     treeA -> left -> left -> left = create(20);
@@ -164,7 +194,7 @@ int main(){
 
     struct Node* newTree = meld(treeA, treeB);
     
-    printTree(newTree);
+    printTree(newTree);*/
 
     return 0;
 }
