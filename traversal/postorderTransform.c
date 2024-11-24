@@ -1,4 +1,4 @@
-/** This code count the postorder math equation.
+/** This code count the postorder math equation.(postorder to inorder)
  * For example: The ans of "2 3 4 * + 400 200 / -" is 12.
  * There are space between each of the number and operator.
  */
