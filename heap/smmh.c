@@ -74,11 +74,12 @@ int checkSibling(int index){
     int min = 0;
     int sI = findSibling(index, &min);
     
+
     if (min == 1 && (sI != -1 && heap[sI] < heap[index])){
-        swapNode(sI, currI);
+        swapNode(sI, index);
         index = sI;
-    }else if (min == 0 && heap[sI] > heap[currI]){
-        swapNode(sI, currI);
+    }else if (min == 0 && heap[sI] > heap[index]){
+        swapNode(sI, index);
         index = sI;
     }
     return index;
@@ -112,11 +113,60 @@ void insert(int x){
     checkInsertChange(currI);
 }
 
+int minChildSiblingChild(int index, int sIndex){
+    if (currI < index * 2){
+        return -1;
+    }else if (currI < sIndex * 2){
+        return index * 2;
+    }else{
+        return heap[index*2] < heap[sIndex*2] ? index*2 : sIndex*2;
+    }
+}
+
+int maxChildSiblingChild(int index, int sIndex){
+    // sIndex is smaller than index.
+    if (currI < sIndex * 2 + 1){
+        return -1;
+    }else if (currI < index * 2 + 1){
+        return sIndex*2+1;
+    }else{
+        return heap[sIndex*2+1] > heap[index*2+1] ? sIndex*2+1 : index*2+1; 
+    }
+}
+
+void checkDeleteChange();
+void checkChildAndSiblingChild(int index){
+    int min = 0;
+    int sI = findSibling(index, &min);
+
+    if (min == 1){
+        if (sI == -1) return;
+        int changeI = minChildSiblingChild(index, sI);
+        if (changeI != -1 && heap[changeI] < heap[index]){
+            swapNode(changeI, index);
+            checkDeleteChange(changeI);
+        }
+    }else{
+        int changeI = maxChildSiblingChild(index, sI);
+        if (changeI != -1 && heap[changeI] > heap[index]){
+            swapNode(changeI, index);
+            checkDeleteChange(changeI);
+        }
+    }
+}
+
+
+void checkDeleteChange(int index){
+    checkSibling(index);
+    checkChildAndSiblingChild(index);
+}
 
 void deleteMin(){
-    return;
+    heap[2] = heap[currI--];
+    checkDeleteChange(2);
 }
 
 void deleteMax(){
-    return;
+    heap[3] = heap[currI--];
+    checkDeleteChange(3);
 }
